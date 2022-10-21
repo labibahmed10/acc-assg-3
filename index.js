@@ -10,6 +10,7 @@ app.get("/", (req, res) => {
    res.send("Welcome to the job management system api");
 });
 
+// for invalid route will fix later
 app.use("*", (req, res) => {
    res.send("Go to the exact location");
 });
