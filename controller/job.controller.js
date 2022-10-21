@@ -61,7 +61,6 @@ exports.createJob = async (req, res, next) => {
       //check user token to find manager's company id. if it doesnt match with req.body.companyInfo then return
       const { email } = req.user;
       const manager = await User.findOne({ email });
-
       //get the company in which this manager is assigned
       const company = await Company.findOne({ managerName: manager._id });
 
@@ -86,6 +85,7 @@ exports.createJob = async (req, res, next) => {
       }
 
       // save or create
+
       const result = await createJobService(req.body);
 
       res.status(200).json({
@@ -126,6 +126,234 @@ exports.getJobsByManagerToken = async (req, res) => {
             managerInfo: user,
             jobs: jobsByCompany,
          },
+      });
+   } catch (error) {
+      res.status(400).json({
+         status: "fail",
+         message: "can't get the data",
+         error: error.message,
+      });
+   }
+};
+
+exports.getJobByManagerTokenJobId = async (req, res) => {
+   try {
+      const { email } = req.user;
+      //get user by this email from User model
+      const user = await User.findOne({ email }).select("-password -__v -createdAt -updatedAt -role -status -appliedJobs");
+      //get company by this user from Company model inside managerName field
+      const company = await Company.findOne({ managerName: user._id });
+
+      //get all jobs
+      const jobs = await Job.find({})
+         .populate({
+            path: "companyInfo",
+            select: "-jobPosts",
+         })
+         .populate({
+            path: "applications",
+            populate: {
+               path: "applicant",
+               select: "-password -__v -createdAt -updatedAt -role -status -appliedJobs",
+            },
+            select: "-job",
+         })
+         .populate({
+            path: "companyInfo",
+            select: "-jobPosts",
+            populate: {
+               path: "managerName",
+               select: "-password -__v -createdAt -updatedAt -role -status -appliedJobs",
+            },
+         });
+
+      //find the required job from jobs  with req.params id
+      const { id } = req.params;
+      const job = jobs.find((job) => {
+         return job._id.toString() == id.toString();
+      });
+
+      //check if managerName.email is equal to req.user.email
+      if (req.user.email !== job.companyInfo.managerName.email) {
+         return res.status(400).json({
+            status: "fail",
+            message: "You are not authorized to get internal data of this job",
+         });
+      }
+
+      res.status(200).json({
+         status: "success",
+         data: {
+            job,
+         },
+      });
+   } catch (error) {
+      res.status(400).json({
+         status: "fail",
+         message: "can't get the data",
+         error: error.message,
+      });
+   }
+};
+
+exports.updateJob = async (req, res) => {
+   //check user token to find manager's company id. if it doesnt match with req.body.companyInfo then return
+   try {
+      const { email } = req.user;
+      const manager = await User.findOne({ email });
+      //get the company in which this manager is assigned
+      const company = await Company.findOne({
+         managerName: manager._id,
+      }).populate({
+         path: "jobPosts",
+      });
+
+      //get the id of the job from jobPosts array of that company that matches the req.params is
+      const job = company.jobPosts.find((job) => job._id.toString() == req.params.id.toString());
+
+      if (!job) {
+         return res.status(400).json({
+            status: "fail",
+            message: "You are not authorized to update this job",
+         });
+      }
+
+      // if job id doesnt match the id of req.params then return
+      // if(job._id != req.params.id){
+      //   return res.status(400).json({
+      //     status: "fail",
+      //     message: "You are not authorized to update this job",
+      //   });
+      // }
+
+      const { id } = req.params;
+      const result = await updateJobService(id, req.body);
+
+      res.status(200).json({
+         status: "success",
+         message: "Job updated successfully!",
+      });
+   } catch (error) {
+      res.status(400).json({
+         status: "fail",
+         message: " Data is not updated ",
+         error: error.message,
+      });
+   }
+};
+
+exports.getJobById = async (req, res) => {
+   try {
+      const { id } = req.params;
+      const job = await getJobByIdService(id);
+
+      res.status(200).json({
+         status: "success",
+         data: job,
+      });
+   } catch (error) {
+      res.status(400).json({
+         status: "fail",
+         message: "can't get the data",
+         error: error.message,
+      });
+   }
+};
+
+exports.applyJob = async (req, res) => {
+   try {
+      const { email } = req.user;
+      const user = await User.findOne({ email }).select("-password -__v -createdAt -updatedAt -role -status -appliedJobs");
+
+      const { id } = req.params;
+
+      const job = await Job.findById(id);
+
+      if (!job) {
+         return res.status(400).json({
+            status: "fail",
+            message: "Job not found",
+         });
+      }
+
+      //check if application date is less or equal to deadline date
+      const today = new Date();
+      const deadline = new Date(job.deadline);
+      if (today > deadline) {
+         return res.status(400).json({
+            status: "fail",
+            message: "Application deadline is over. try next time",
+         });
+      }
+
+      //check if user has already applied for this job
+      // get all the applications that have been applied for this job and find if the user has already applied
+      const applications = await Application.find({ job: job._id });
+      const isApplied = applications.find((application) => application.applicant._id.toString() == user._id.toString());
+
+      if (isApplied) {
+         return res.status(400).json({
+            status: "fail",
+            message: "You have already applied for this job",
+         });
+      }
+
+      if (!req.file) {
+         res.status(400).json({
+            status: "fail",
+            message: "Please upload your resume",
+         });
+         return;
+      }
+
+      const auth = googleDriveService.authenticateGoogle();
+      const resume = await googleDriveService.uploadToGoogleDrive(req.file, auth);
+      googleDriveService.deleteFile(req.file.path);
+
+      const resumeLink = `https://drive.google.com/file/d/${resume.data.id}/view`;
+
+      const result = await applyJobService(id, user._id, resumeLink);
+
+      res.status(200).json({
+         status: "success",
+         message: "Job applied successfully!",
+         result: {
+            data: result,
+         },
+      });
+   } catch (error) {
+      res.status(400).json({
+         status: "fail",
+         message: "can't get the data",
+         error: error.message,
+      });
+   }
+};
+
+exports.getHighestPaidJobs = async (req, res) => {
+   try {
+      const jobs = await getHighestPaidJobsService();
+
+      res.status(200).json({
+         status: "success",
+         data: jobs,
+      });
+   } catch (error) {
+      res.status(400).json({
+         status: "fail",
+         message: "can't get the data",
+         error: error.message,
+      });
+   }
+};
+
+exports.getMostAppliedJobs = async (req, res) => {
+   try {
+      const jobs = await getMostAppliedJobsService();
+
+      res.status(200).json({
+         status: "success",
+         data: jobs,
       });
    } catch (error) {
       res.status(400).json({
