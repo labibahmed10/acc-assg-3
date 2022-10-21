@@ -1,4 +1,6 @@
-const { getCompaniesService, createCompanyService, getCompanyByIdService } = require("../Service/company.service");
+const { getCompaniesService,
+    createCompanyService,
+     getCompanyByIdService } = require("../Service/company.service");
 
 exports.getCompanies = async (req, res, next) => {
    try {

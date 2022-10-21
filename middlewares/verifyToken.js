@@ -1,11 +1,5 @@
 const jwt = require("jsonwebtoken");
 const { promisify } = require("util");
-/**
- * 1. check if token exists
- * 2. if not token send res
- * 3. decode the token
- * 4. if valid next
- */
 
 module.exports = async (req, res, next) => {
    try {
@@ -19,8 +13,6 @@ module.exports = async (req, res, next) => {
       }
 
       const decoded = await promisify(jwt.verify)(token, process.env.TOKEN_SECRET);
-
-      // const user = User.findOne({ email: decoded.email })
 
       req.user = decoded;
 

@@ -7,8 +7,8 @@ const {
    allHiringManagersService,
    candidateByIdService,
 } = require("../service/user.services");
-const { sendMailWithGmail } = require("../util/email");
-const { generateToken } = require("../util/token");
+const { sendMailWithGmail } = require("../utils/email");
+const { generateToken } = require("../utils/token");
 
 exports.signup = async (req, res) => {
    try {
