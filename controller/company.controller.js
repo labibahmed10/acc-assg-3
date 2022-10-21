@@ -65,3 +65,28 @@ exports.createCompany = async (req, res, next) => {
       });
    }
 };
+
+
+exports.getCompanyById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    let company = await getCompanyByIdService(id);
+
+    if (!company) {
+      return res.status(400).json({
+        status: "fail",
+        error: "can't get the stock with this id",
+      });
+    }
+    res.status(400).json({
+      status: "success",
+      data: company,
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: "fail",
+      message: "can't get the company with this id",
+      error: error.message,
+    });
+  }
+};

@@ -22,3 +22,18 @@ exports.createCompanyService = async (data) => {
    });
    return result;
 };
+
+exports.getCompanyByIdService = async (id) => {
+   const company = await Company.findOne({ _id: id })
+      // populate managerName without password
+      .populate({
+         path: "managerName",
+         select: "-password -__v -createdAt -updatedAt -role -status -appliedJobs",
+      })
+      .populate({
+         path: "jobPosts",
+         select: "-applications",
+      });
+
+   return company;
+};
