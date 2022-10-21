@@ -101,7 +101,6 @@ userSchema.pre("save", function (next) {
       return next();
    }
    const password = this.password;
-
    const hashedPassword = bcrypt.hashSync(password);
 
    this.password = hashedPassword;
@@ -121,7 +120,6 @@ userSchema.methods.generateConfirmationToken = function () {
    this.confirmationToken = token;
 
    const date = new Date();
-
    date.setDate(date.getDate() + 1);
    this.confirmationTokenExpires = date;
 
