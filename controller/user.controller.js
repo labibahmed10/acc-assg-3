@@ -2,11 +2,11 @@ const {
    signupService,
    findUserByEmail,
    findUserByToken,
-   findUserById,
    allCandidatesService,
-   allHiringManagersService,
    candidateByIdService,
-} = require("../service/user.services");
+   allHiringManagersService,
+   findUserById,
+} = require("../Service/user.services");
 const { sendMailWithGmail } = require("../util/email");
 const { generateToken } = require("../util/token");
 
