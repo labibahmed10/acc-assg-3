@@ -55,3 +55,12 @@ exports.candidateByIdService = async (id) => {
          select: "-applicant",
       });
 };
+
+exports.allHiringManagersService = async () => {
+   return await User.find({ role: "Hiring-Manager" }).select("-password -__v -createdAt -updatedAt -appliedJobs");
+};
+
+exports.findUserById = async (id) => {
+   // return user info excluding password
+   return await User.findOne({ _id: id }).select("-password -__v -createdAt -updatedAt ");
+};

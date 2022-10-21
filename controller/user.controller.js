@@ -185,28 +185,107 @@ exports.getCandidates = async (req, res) => {
    }
 };
 
-
 exports.getCandidateById = async (req, res) => {
-  try {
-     const { id } = req.params;
+   try {
+      const { id } = req.params;
 
-     const candidate = await candidateByIdService(id);
+      const candidate = await candidateByIdService(id);
 
-     if (!candidate) {
-        return res.status(404).json({
-           status: "fail",
-           error: "No candidate found",
-        });
-     }
+      if (!candidate) {
+         return res.status(404).json({
+            status: "fail",
+            error: "No candidate found",
+         });
+      }
 
-     res.status(200).json({
-        status: "success",
-        data: candidate,
-     });
-  } catch (error) {
-     res.status(500).json({
-        status: "fail",
-        error,
-     });
-  }
+      res.status(200).json({
+         status: "success",
+         data: candidate,
+      });
+   } catch (error) {
+      res.status(500).json({
+         status: "fail",
+         error,
+      });
+   }
+};
+
+exports.getManagers = async (req, res) => {
+   try {
+      const hiringManagers = await allHiringManagersService();
+
+      res.status(200).json({
+         status: "success",
+         data: hiringManagers,
+      });
+   } catch (error) {
+      res.status(500).json({
+         status: "fail",
+         error,
+      });
+   }
+};
+
+exports.promoteUserRole = async (req, res) => {
+   try {
+      const { id } = req.params;
+
+      const user = await findUserById(id);
+
+      if (!user) {
+         return res.status(404).json({
+            status: "fail",
+            error: "No user found",
+         });
+      }
+
+      if (req.user.email === user.email) {
+         return res.status(403).json({
+            status: "fail",
+            error: "You cannot demote yourself to Candidate / Hiring-Manager",
+         });
+      }
+
+      if (req.body.role === "Admin" && user.role === "Admin") {
+         return res.status(403).json({
+            status: "fail",
+            error: "User is already an admin",
+         });
+      }
+
+      if (req.body.role === "Hiring-Manager" && user.role === "Hiring-Manager") {
+         return res.status(403).json({
+            status: "fail",
+            error: "User is already a hiring manager",
+         });
+      }
+
+      if (req.body.role === "Candidate" && user.role === "Candidate") {
+         return res.status(403).json({
+            status: "fail",
+            error: "User is already a candidate",
+         });
+      }
+
+      if (req.body.role === "Admin" || req.body.role === "Hiring-Manager" || req.body.role === "Candidate") {
+         user.role = req.body.role;
+
+         await user.save({ validateBeforeSave: false });
+
+         res.status(200).json({
+            status: "success",
+            message: `Successfully promoted user to ${req.body.role}`,
+         });
+      } else {
+         res.status(403).json({
+            status: "fail",
+            error: `You are not allowed to promote user to ${req.body.role}. Possible roles are Admin, Hiring-Manager & Candidate`,
+         });
+      }
+   } catch (error) {
+      res.status(500).json({
+         status: "fail",
+         error,
+      });
+   }
 };
