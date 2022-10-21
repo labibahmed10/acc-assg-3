@@ -11,7 +11,7 @@ const {
    getJobByIdService,
    getHighestPaidJobsService,
    getMostAppliedJobsService,
-} = require("../Service/job.services");
+} = require("../service/job.services");
 
 exports.getAllJobs = async (req, res) => {
    try {

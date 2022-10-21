@@ -62,7 +62,7 @@ exports.signup = async (req, res) => {
    } catch (error) {
       res.status(500).json({
          status: "fail",
-         error,
+         error: error.message,
       });
    }
 };
