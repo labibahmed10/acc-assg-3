@@ -2,6 +2,14 @@ const Company = require("../model/Company.model");
 const Application = require("../model/Application.model");
 const Job = require("../model/Job.model");
 const User = require("../model/User.model");
+const {
+   getAllJobsService,
+   createJobService,
+   updateJobService,
+   getJobByIdService,
+   getHighestPaidJobsService,
+   getMostAppliedJobsService,
+} = require("../Service/job.services");
 
 exports.getAllJobs = async (req, res) => {
    try {
