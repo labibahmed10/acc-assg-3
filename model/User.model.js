@@ -115,7 +115,7 @@ userSchema.methods.comparePassword = function (password, hash) {
 };
 
 userSchema.methods.generateConfirmationToken = function () {
-   const token = crypto.randomBytes(32).toString("hex");
+   const token = crypto.randomBytes(64).toString("hex");
 
    this.confirmationToken = token;
 

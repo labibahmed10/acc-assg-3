@@ -1,5 +1,5 @@
 const express = require("express");
-const userController = require("../controllers/user.controller");
+const userController = require("../controller/user.controller");
 const authorization = require("../middleware/authorization");
 const verifyToken = require("../middleware/verifyToken");
 const router = express.Router();
@@ -16,4 +16,5 @@ router.get("/candidates", verifyToken, authorization("Admin"), userController.ge
 router.get("/candidate/:id", verifyToken, authorization("Admin"), userController.getCandidateById);
 router.get("/hiring-managers", verifyToken, authorization("Admin"), userController.getManagers);
 router.put("/promote/:id", verifyToken, authorization("Admin"), userController.promoteUserRole);
+
 module.exports = router;

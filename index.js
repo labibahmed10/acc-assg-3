@@ -12,10 +12,11 @@ app.get("/", (req, res) => {
 
 //routes
 const userRoute = require("./routes/user.route");
-
+const jobRoute = require("./routes/job.route");
 
 // declaration of user,company,admin routes
 app.use("/api/v1/user", userRoute);
+app.use("/api/v1", jobRoute);
 
 // for invalid route will fix later
 app.use("*", (req, res) => {
