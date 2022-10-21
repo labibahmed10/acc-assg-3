@@ -1,5 +1,6 @@
 const CompanyModel = require("../model/Company.model");
 
+
 exports.getCompaniesService = async (filters, queries) => {
    const companies = await CompanyModel.find(filters).skip(queries.skip).limit(queries.limit).select(queries.fields).sort(queries.sortBy).populate({
       path: "managerName",

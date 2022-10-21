@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 const { ObjectId } = mongoose.Schema.Types;
-const validator = require("validator");
 
 // schema design
 const applicationSchema = mongoose.Schema(

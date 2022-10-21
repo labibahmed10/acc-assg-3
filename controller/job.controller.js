@@ -1,8 +1,9 @@
-const Company = require("../model/Company.model");
-const Application = require("../model/Application.model");
-const Job = require("../model/Job.model");
-const User = require("../model/User.model");
-const googleDriveService = require("../middleware/googleDriveService");
+const CompanyModel = require("../model/Company.model");
+const ApplicationModel = require("../model/Application.model");
+const JobModel = require("../model/Job.model");
+const UserModel = require("../model/User.model");
+// const googleDriveService = require("../middlewares/googleDriveService");
+
 const {
    getAllJobsService,
    createJobService,
@@ -69,9 +70,9 @@ exports.createJob = async (req, res, next) => {
    try {
       //check user token to find manager's company id. if it doesnt match with req.body.companyInfo then return
       const { email } = req.user;
-      const manager = await User.findOne({ email });
+      const manager = await UserModel.findOne({ email });
       //get the company in which this manager is assigned
-      const company = await Company.findOne({ managerName: manager._id });
+      const company = await CompanyModel.findOne({ managerName: manager._id });
 
       const { companyInfo } = req.body;
       if (company._id.toString() !== companyInfo.toString()) {
@@ -115,12 +116,12 @@ exports.getJobsByManagerToken = async (req, res) => {
    try {
       const { email } = req.user;
       //get user by this email from User model
-      const user = await User.findOne({ email }).select("-password -__v -createdAt -updatedAt -role -status -appliedJobs");
+      const user = await UserModel.findOne({ email }).select("-password -__v -createdAt -updatedAt -role -status -appliedJobs");
       //get company by this user from Company model inside managerName field
-      const company = await Company.findOne({ managerName: user._id });
+      const company = await CompanyModel.findOne({ managerName: user._id });
 
       //get all jobs
-      const jobs = await Job.find({}).select("-applications").populate({
+      const jobs = await JobModel.find({}).select("-applications").populate({
          path: "companyInfo",
          select: "-jobPosts",
       });
@@ -149,12 +150,12 @@ exports.getJobByManagerTokenJobId = async (req, res) => {
    try {
       const { email } = req.user;
       //get user by this email from User model
-      const user = await User.findOne({ email }).select("-password -__v -createdAt -updatedAt -role -status -appliedJobs");
+      const user = await UserModel.findOne({ email }).select("-password -__v -createdAt -updatedAt -role -status -appliedJobs");
       //get company by this user from Company model inside managerName field
-      const company = await Company.findOne({ managerName: user._id });
+      const company = await CompanyModel.findOne({ managerName: user._id });
 
       //get all jobs
-      const jobs = await Job.find({})
+      const jobs = await JobModel.find({})
          .populate({
             path: "companyInfo",
             select: "-jobPosts",
@@ -209,9 +210,9 @@ exports.updateJob = async (req, res) => {
    //check user token to find manager's company id. if it doesnt match with req.body.companyInfo then return
    try {
       const { email } = req.user;
-      const manager = await User.findOne({ email });
+      const manager = await UserModel.findOne({ email });
       //get the company in which this manager is assigned
-      const company = await Company.findOne({
+      const company = await CompanyModel.findOne({
          managerName: manager._id,
       }).populate({
          path: "jobPosts",
@@ -272,11 +273,11 @@ exports.getJobById = async (req, res) => {
 exports.applyJob = async (req, res) => {
    try {
       const { email } = req.user;
-      const user = await User.findOne({ email }).select("-password -__v -createdAt -updatedAt -role -status -appliedJobs");
+      const user = await UserModel.findOne({ email }).select("-password -__v -createdAt -updatedAt -role -status -appliedJobs");
 
       const { id } = req.params;
 
-      const job = await Job.findById(id);
+      const job = await JobModel.findById(id);
 
       if (!job) {
          return res.status(400).json({
@@ -297,7 +298,7 @@ exports.applyJob = async (req, res) => {
 
       //check if user has already applied for this job
       // get all the applications that have been applied for this job and find if the user has already applied
-      const applications = await Application.find({ job: job._id });
+      const applications = await ApplicationModel.find({ job: job._id });
       const isApplied = applications.find((application) => application.applicant._id.toString() == user._id.toString());
 
       if (isApplied) {

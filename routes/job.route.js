@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const jobController = require("../controller/job.controller");
-const authorization = require("../middleware/authorization");
-const verifyToken = require("../middleware/verifyToken");
+const authorization = require("../middlewares/authorization");
+const pdfUploader = require("../middlewares/pdfUploader");
+const verifyToken = require("../middlewares/verifyToken");
 
 router.route("/jobs").get(jobController.getAllJobs).post(verifyToken, authorization("Admin", "Hiring-Manager"), jobController.createJob);
 router.route("/manager/jobs").get(verifyToken, authorization("Admin", "Hiring-Manager"), jobController.getJobsByManagerToken);

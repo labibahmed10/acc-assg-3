@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 const crypto = require("crypto");
-const ObjectId = mongoose.Schema.Types;
+const { ObjectId } = mongoose.Schema.Types;
 
 const bcrypt = require("bcryptjs");
 
@@ -126,6 +126,6 @@ userSchema.methods.generateConfirmationToken = function () {
    return token;
 };
 
-const User = mongoose.model("User", userSchema);
+const UserModel = mongoose.model("UserModel", userSchema);
 
-module.exports = User;
+module.exports = UserModel;

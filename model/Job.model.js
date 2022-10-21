@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 const { ObjectId } = mongoose.Schema.Types;
-const validator = require("validator");
 
 // schema design
 const jobSchema = mongoose.Schema(
@@ -58,6 +57,6 @@ const jobSchema = mongoose.Schema(
    },
 );
 
-const Job = mongoose.model("Job", jobSchema);
+const JobModel = mongoose.model("JobModel", jobSchema);
 
-module.exports = Job;
+module.exports = JobModel;
