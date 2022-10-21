@@ -168,3 +168,45 @@ exports.confirmEmail = async (req, res) => {
       });
    }
 };
+
+exports.getCandidates = async (req, res) => {
+   try {
+      const candidates = await allCandidatesService();
+
+      res.status(200).json({
+         status: "success",
+         data: candidates,
+      });
+   } catch (error) {
+      res.status(500).json({
+         status: "fail",
+         error,
+      });
+   }
+};
+
+
+exports.getCandidateById = async (req, res) => {
+  try {
+     const { id } = req.params;
+
+     const candidate = await candidateByIdService(id);
+
+     if (!candidate) {
+        return res.status(404).json({
+           status: "fail",
+           error: "No candidate found",
+        });
+     }
+
+     res.status(200).json({
+        status: "success",
+        data: candidate,
+     });
+  } catch (error) {
+     res.status(500).json({
+        status: "fail",
+        error,
+     });
+  }
+};
