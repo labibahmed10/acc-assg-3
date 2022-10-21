@@ -1,3 +1,8 @@
+const { findUserByEmail } = require("../Service/user.services");
+const { signupService } = require("../services/user.service");
+const { sendMailWithGmail } = require("../utils/email");
+const { generateToken } = require("../utils/token");
+
 exports.signup = async (req, res) => {
    try {
       if (req.body.role === "Admin") {
@@ -51,6 +56,60 @@ exports.signup = async (req, res) => {
       res.status(500).json({
          status: "fail",
          error,
+      });
+   }
+};
+
+exports.login = async (req, res) => {
+   try {
+      const { email, password } = req.body;
+
+      if (!email || !password) {
+         return res.status(401).json({
+            status: "fail",
+            error: "Please provide your credentials",
+         });
+      }
+
+      const user = await findUserByEmail(email);
+      if (!user) {
+         return res.status(401).json({
+            status: "fail",
+            error: "No user found. Please create an account",
+         });
+      }
+
+      const isPasswordValid = user.comparePassword(password, user.password);
+
+      if (!isPasswordValid) {
+         return res.status(403).json({
+            status: "fail",
+            error: "Password is not correct",
+         });
+      }
+
+      if (user.status != "active") {
+         return res.status(401).json({
+            status: "fail",
+            error: "Your account is not active yet.",
+         });
+      }
+
+      const { password: pwd, ...others } = user.toObject();
+      const token = generateToken(others);
+
+      res.status(200).json({
+         status: "success",
+         message: "Successfully logged in",
+         data: {
+            user: others,
+            token,
+         },
+      });
+   } catch (error) {
+      res.status(500).json({
+         status: "fail",
+         error: error.message,
       });
    }
 };

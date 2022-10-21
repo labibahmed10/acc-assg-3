@@ -4,3 +4,7 @@ exports.signupService = async (userInfo) => {
    const user = await UserModel.create(userInfo);
    return user;
 };
+
+exports.findUserByEmail = async (email) => {
+   return await UserModel.findOne({ email });
+};
