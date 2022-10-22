@@ -5,8 +5,7 @@ const { ObjectId } = mongoose.Schema.Types;
 
 const bcrypt = require("bcryptjs");
 
-const userSchema = mongoose.Schema(
-   {
+const userSchema = mongoose.Schema({
       email: {
          type: String,
          validate: [validator.isEmail, "Provide a valid Email"],
@@ -15,6 +14,7 @@ const userSchema = mongoose.Schema(
          unique: true,
          required: [true, "Email address is required"],
       },
+      
       password: {
          type: String,
          required: [true, "Password is required"],
@@ -30,6 +30,7 @@ const userSchema = mongoose.Schema(
             message: "Password {VALUE} is not strong enough, try again",
          },
       },
+
       confirmPassword: {
          type: String,
          required: [true, "Please confirm your password"],
@@ -67,17 +68,18 @@ const userSchema = mongoose.Schema(
          type: String,
          validate: [validator.isMobilePhone, "Please provide a valid contact number"],
       },
-      appliedJobs: [
-         {
-            type: ObjectId,
-            ref: "Application",
-         },
+
+      appliedJobs: [{
+         type: ObjectId,
+         ref: "Application",
+       },
       ],
 
       imageURL: {
          type: String,
          validate: [validator.isURL, "Please provide a valid url"],
       },
+      
       status: {
          type: String,
          default: "inactive",

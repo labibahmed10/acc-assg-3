@@ -15,9 +15,6 @@ const {
 
 exports.getAllJobs = async (req, res) => {
    try {
-      //{price:{$ gt:50}
-      //{ price: { gt: '50' } }
-
       let filters = { ...req.query };
 
       //sort , page , limit -> exclude
@@ -33,7 +30,6 @@ exports.getAllJobs = async (req, res) => {
       const queries = {};
 
       if (req.query.sort) {
-         // price,qunatity   -> 'price quantity'
          const sortBy = req.query.sort.split(",").join(" ");
          queries.sortBy = sortBy;
       }
@@ -44,8 +40,7 @@ exports.getAllJobs = async (req, res) => {
       }
 
       if (req.query.page) {
-         const { page = 1, limit = 10 } = req.query; // "3" "10"
-
+         const { page = 1, limit = 10 } = req.query;
          const skip = (page - 1) * parseInt(limit);
          queries.skip = skip;
          queries.limit = parseInt(limit);
@@ -125,6 +120,7 @@ exports.getJobsByManagerToken = async (req, res) => {
          path: "companyInfo",
          select: "-jobPosts",
       });
+
       //find the jobs by company id
       const jobsByCompany = jobs.filter((job) => {
          return job.companyInfo._id.toString() == company._id.toString();

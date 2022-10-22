@@ -67,6 +67,45 @@ exports.signup = async (req, res) => {
    }
 };
 
+exports.confirmEmail = async (req, res) => {
+   try {
+      const { token } = req.params;
+      const user = await findUserByToken(token);
+
+      if (!user) {
+         return res.status(403).json({
+            status: "fail",
+            error: "Invalid token",
+         });
+      }
+
+      const expired = new Date() > new Date(user.confirmationTokenExpires);
+
+      if (expired) {
+         return res.status(401).json({
+            status: "fail",
+            error: "Token expired, try again",
+         });
+      }
+
+      user.status = "active";
+      user.confirmationToken = undefined;
+      user.confirmationTokenExpires = undefined;
+
+      user.save({ validateBeforeSave: false });
+
+      res.status(200).json({
+         status: "success",
+         message: "Successfully activated your account",
+      });
+   } catch (error) {
+      res.status(500).json({
+         status: "fail",
+         error,
+      });
+   }
+};
+
 exports.login = async (req, res) => {
    try {
       const { email, password } = req.body;
@@ -98,7 +137,7 @@ exports.login = async (req, res) => {
       if (user.status != "active") {
          return res.status(401).json({
             status: "fail",
-            error: "Your account is not active yet.",
+            error: "Your account is not active yet. Try to active your account with the gamil sent to your account",
          });
       }
 
@@ -132,46 +171,7 @@ exports.getMe = async (req, res) => {
    } catch (error) {
       res.status(500).json({
          status: "fail",
-         error,
-      });
-   }
-};
-
-exports.confirmEmail = async (req, res) => {
-   try {
-      const { token } = req.params;
-      const user = await findUserByToken(token);
-
-      if (!user) {
-         return res.status(403).json({
-            status: "fail",
-            error: "Invalid token",
-         });
-      }
-
-      const expired = new Date() > new Date(user.confirmationTokenExpires);
-
-      if (expired) {
-         return res.status(401).json({
-            status: "fail",
-            error: "Token expired",
-         });
-      }
-
-      user.status = "active";
-      user.confirmationToken = undefined;
-      user.confirmationTokenExpires = undefined;
-
-      user.save({ validateBeforeSave: false });
-
-      res.status(200).json({
-         status: "success",
-         message: "Successfully activated your account.",
-      });
-   } catch (error) {
-      res.status(500).json({
-         status: "fail",
-         error,
+         error: error.message,
       });
    }
 };
