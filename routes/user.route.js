@@ -12,7 +12,7 @@ router.post("/login", userController.login);
 // confirmation
 router.get("/me", verifyToken, userController.getMe);
 
-// admin routes
+// admin routes - aptional
 router.get("/candidates", verifyToken, authorization("Admin"), userController.getCandidates);
 router.get("/candidate/:id", verifyToken, authorization("Admin"), userController.getCandidateById);
 router.get("/hiring-managers", verifyToken, authorization("Admin"), userController.getManagers);

@@ -2,11 +2,12 @@ const {
    signupService,
    findUserByEmail,
    findUserByToken,
-   allCandidatesService,
-   candidateByIdService,
-   allHiringManagersService,
    findUserById,
+   allCandidatesService,
+   allHiringManagersService,
+   candidateByIdService,
 } = require("../Service/user.services");
+
 const { sendMailWithGmail } = require("../util/email");
 const { generateToken } = require("../util/token");
 
@@ -41,7 +42,7 @@ exports.signup = async (req, res) => {
 
       const user = await signupService(req.body);
 
-      const token = user.generateConfirmationToken();
+      const token = await user.generateConfirmationToken();
 
       await user.save({ validateBeforeSave: false });
 
@@ -63,45 +64,6 @@ exports.signup = async (req, res) => {
       res.status(500).json({
          status: "fail",
          error: error.message,
-      });
-   }
-};
-
-exports.confirmEmail = async (req, res) => {
-   try {
-      const { token } = req.params;
-      const user = await findUserByToken(token);
-
-      if (!user) {
-         return res.status(403).json({
-            status: "fail",
-            error: "Invalid token",
-         });
-      }
-
-      const expired = new Date() > new Date(user.confirmationTokenExpires);
-
-      if (expired) {
-         return res.status(401).json({
-            status: "fail",
-            error: "Token expired, try again",
-         });
-      }
-
-      user.status = "active";
-      user.confirmationToken = undefined;
-      user.confirmationTokenExpires = undefined;
-
-      user.save({ validateBeforeSave: false });
-
-      res.status(200).json({
-         status: "success",
-         message: "Successfully activated your account",
-      });
-   } catch (error) {
-      res.status(500).json({
-         status: "fail",
-         error,
       });
    }
 };
@@ -137,7 +99,7 @@ exports.login = async (req, res) => {
       if (user.status != "active") {
          return res.status(401).json({
             status: "fail",
-            error: "Your account is not active yet. Try to active your account with the gamil sent to your account",
+            error: "Your account is not active yet.",
          });
       }
 
@@ -171,59 +133,42 @@ exports.getMe = async (req, res) => {
    } catch (error) {
       res.status(500).json({
          status: "fail",
-         error: error.message,
-      });
-   }
-};
-
-exports.getCandidates = async (req, res) => {
-   try {
-      const candidates = await allCandidatesService();
-
-      res.status(200).json({
-         status: "success",
-         data: candidates,
-      });
-   } catch (error) {
-      res.status(500).json({
-         status: "fail",
          error,
       });
    }
 };
 
-exports.getCandidateById = async (req, res) => {
+exports.confirmEmail = async (req, res) => {
    try {
-      const { id } = req.params;
+      const { token } = req.params;
+      console.log(token);
+      const user = await findUserByToken(token);
 
-      const candidate = await candidateByIdService(id);
-
-      if (!candidate) {
-         return res.status(404).json({
+      if (!user) {
+         return res.status(403).json({
             status: "fail",
-            error: "No candidate found",
+            error: "Invalid token",
          });
       }
 
+      const expired = new Date() > new Date(user.confirmationTokenExpires);
+
+      if (expired) {
+         return res.status(401).json({
+            status: "fail",
+            error: "Token expired",
+         });
+      }
+
+      user.status = "active";
+      user.confirmationToken = undefined;
+      user.confirmationTokenExpires = undefined;
+
+      user.save({ validateBeforeSave: false });
+
       res.status(200).json({
          status: "success",
-         data: candidate,
-      });
-   } catch (error) {
-      res.status(500).json({
-         status: "fail",
-         error,
-      });
-   }
-};
-
-exports.getManagers = async (req, res) => {
-   try {
-      const hiringManagers = await allHiringManagersService();
-
-      res.status(200).json({
-         status: "success",
-         data: hiringManagers,
+         message: "Successfully activated your account.",
       });
    } catch (error) {
       res.status(500).json({
@@ -289,6 +234,63 @@ exports.promoteUserRole = async (req, res) => {
             error: `You are not allowed to promote user to ${req.body.role}. Possible roles are Admin, Hiring-Manager & Candidate`,
          });
       }
+   } catch (error) {
+      res.status(500).json({
+         status: "fail",
+         error,
+      });
+   }
+};
+
+exports.getCandidates = async (req, res) => {
+   try {
+      const candidates = await allCandidatesService();
+
+      res.status(200).json({
+         status: "success",
+         data: candidates,
+      });
+   } catch (error) {
+      res.status(500).json({
+         status: "fail",
+         error,
+      });
+   }
+};
+
+exports.getCandidateById = async (req, res) => {
+   try {
+      const { id } = req.params;
+
+      const candidate = await candidateByIdService(id);
+
+      if (!candidate) {
+         return res.status(404).json({
+            status: "fail",
+            error: "No candidate found",
+         });
+      }
+
+      res.status(200).json({
+         status: "success",
+         data: candidate,
+      });
+   } catch (error) {
+      res.status(500).json({
+         status: "fail",
+         error,
+      });
+   }
+};
+
+exports.getManagers = async (req, res) => {
+   try {
+      const hiringManagers = await allHiringManagersService();
+
+      res.status(200).json({
+         status: "success",
+         data: hiringManagers,
+      });
    } catch (error) {
       res.status(500).json({
          status: "fail",

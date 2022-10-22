@@ -66,10 +66,12 @@ exports.createJob = async (req, res, next) => {
       //check user token to find manager's company id. if it doesnt match with req.body.companyInfo then return
       const { email } = req.user;
       const manager = await UserModel.findOne({ email });
+      console.log(manager);
       //get the company in which this manager is assigned
       const company = await CompanyModel.findOne({ managerName: manager._id });
-
+      console.log(company);
       const { companyInfo } = req.body;
+      console.log(companyInfo);
       if (company._id.toString() !== companyInfo.toString()) {
          return res.status(400).json({
             status: "fail",

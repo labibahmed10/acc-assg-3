@@ -34,7 +34,7 @@ const jobSchema = mongoose.Schema(
       },
       companyInfo: {
          type: ObjectId,
-         ref: "Company",
+         ref: "CompanyModel",
          required: true,
       },
       jobDescription: {
@@ -44,7 +44,7 @@ const jobSchema = mongoose.Schema(
       applications: [
          {
             type: ObjectId,
-            ref: "Application",
+            ref: "ApplicationModel",
          },
       ],
       deadline: {

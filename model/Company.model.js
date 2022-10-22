@@ -7,7 +7,7 @@ const companySchema = mongoose.Schema(
    {
       companyName: {
          type: String,
-         required: [true, "Please provide a title for this job."],
+         required: [true, "Please provide a name for the company"],
          trim: true,
          unique: [true, "Company must be unique"],
          lowercase: true,
@@ -17,22 +17,25 @@ const companySchema = mongoose.Schema(
       managerName: {
          type: ObjectId,
          unique: true,
-         ref: "User",
+         ref: "UserModel",
       },
+
       location: {
          type: String,
          required: true,
          trim: true,
       },
+
       companyWebsite: {
          type: String,
          required: [true, "Please provide a company website."],
          validate: [validator.isURL, "Please provide a valid company url"],
       },
+      
       jobPosts: [
          {
             type: ObjectId,
-            ref: "Job",
+            ref: "JobModel",
          },
       ],
    },

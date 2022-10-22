@@ -1,11 +1,10 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 const crypto = require("crypto");
-const { ObjectId } = mongoose.Schema.Types;
-
 const bcrypt = require("bcryptjs");
 
-const userSchema = mongoose.Schema({
+const userSchema = mongoose.Schema(
+   {
       email: {
          type: String,
          validate: [validator.isEmail, "Provide a valid Email"],
@@ -14,7 +13,6 @@ const userSchema = mongoose.Schema({
          unique: true,
          required: [true, "Email address is required"],
       },
-      
       password: {
          type: String,
          required: [true, "Password is required"],
@@ -27,7 +25,7 @@ const userSchema = mongoose.Schema({
                   minUppercase: 1,
                   minSymbols: 1,
                }),
-            message: "Password {VALUE} is not strong enough, try again",
+            message: "Password {VALUE} is not strong enough.",
          },
       },
 
@@ -36,9 +34,9 @@ const userSchema = mongoose.Schema({
          required: [true, "Please confirm your password"],
          validate: {
             validator: function (value) {
-               return this.password === value;
+               return value === this.password;
             },
-            message: "Passwords didn't match!, try again",
+            message: "Passwords don't match!",
          },
       },
 
@@ -67,19 +65,19 @@ const userSchema = mongoose.Schema({
       contactNumber: {
          type: String,
          validate: [validator.isMobilePhone, "Please provide a valid contact number"],
-      },
-
-      appliedJobs: [{
-         type: ObjectId,
-         ref: "Application",
-       },
+      }, 
+      appliedJobs: [
+         {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Application",
+         },
       ],
 
       imageURL: {
          type: String,
          validate: [validator.isURL, "Please provide a valid url"],
       },
-      
+
       status: {
          type: String,
          default: "inactive",
@@ -103,6 +101,7 @@ userSchema.pre("save", function (next) {
       return next();
    }
    const password = this.password;
+
    const hashedPassword = bcrypt.hashSync(password);
 
    this.password = hashedPassword;
@@ -117,8 +116,7 @@ userSchema.methods.comparePassword = function (password, hash) {
 };
 
 userSchema.methods.generateConfirmationToken = function () {
-   const token = crypto.randomBytes(64).toString("hex");
-
+   const token = crypto.randomBytes(32).toString("hex");
    this.confirmationToken = token;
 
    const date = new Date();

@@ -8,7 +8,7 @@ module.exports = async (req, res, next) => {
       if (!token) {
          return res.status(401).json({
             status: "fail",
-            error: "You are not logged in",
+            error: "You are not logged in with your token",
          });
       }
 

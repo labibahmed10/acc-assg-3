@@ -13,7 +13,6 @@ exports.findUserByEmail = async (email) => {
    return await UserModel.findOne({ email });
 };
 
-
 exports.allCandidatesService = async () => {
    return await User.find({ role: "Candidate" })
       .select("-password -__v -createdAt -updatedAt ")

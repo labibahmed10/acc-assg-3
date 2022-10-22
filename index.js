@@ -12,6 +12,7 @@ const companyRoute = require("./routes/company.route");
 app.use(cors());
 app.use(express.json());
 
+// database connection here
 require("./server");
 
 // declaration of user,company,admin routes
@@ -31,5 +32,3 @@ app.use("*", (req, res) => {
 app.listen(port, () => {
    console.log(`The port is connected to ${port}`);
 });
-
-module.exports = app;
