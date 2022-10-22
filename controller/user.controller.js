@@ -4,7 +4,7 @@ const { generateToken } = require('../Utils/token')
 exports.signUp = async (req, res) => {
     const userInfo = req.body
     try {
-
+        
         const userExist = await service.userExist(userInfo.email)
         if (userExist) {
             return res.status(400).json({ status: 'Failed', error: "User already Exist with the same email" })
