@@ -1,5 +1,5 @@
-const Job = require("../Model/Job");
-const Candidate = require("../Model/Candidate");
+const Job = require("../model/Job");
+const Candidate = require("../model/Candidate");
 
 exports.getAllJobsService = async (filter, sort) => {
    const jobs = await Job.find(filter).sort(sort);

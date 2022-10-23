@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const controller = require("../Controller/admin.controller");
-const { authorize } = require("../Middlewares/authorization");
-const { verifyToken } = require("../Middlewares/verifyToken");
+const controller = require("../controller/admin.controller");
+const { authorize } = require("../middlewares/authorization");
+const { verifyToken } = require("../middlewares/verifyToken");
 
 router.get("/candidates", verifyToken, authorize("admin"), controller.getAllCandidates);
 router.get("/candidate/:id", verifyToken, authorize("admin"), controller.getCandidate);

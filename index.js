@@ -5,11 +5,11 @@ const dotenv = require("dotenv");
 const app = express();
 
 //routes
-const userRoute = require("./Routes/user.route");
-const adminRoute = require("./Routes/admin.route");
-const generalRoute = require("./Routes/general.route");
-const candidateRoute = require("./Routes/candidate.route");
-const hiringManagerRoute = require("./Routes/hiringManager.route");
+const userRoute = require("./routes/user.route");
+const adminRoute = require("./routes/admin.route");
+const generalRoute = require("./routes/general.route");
+const candidateRoute = require("./routes/candidate.route");
+const hiringManagerRoute = require("./routes/hiringManager.route");
 
 // middlewares
 app.use(cors());
