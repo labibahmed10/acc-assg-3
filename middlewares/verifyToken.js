@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const { promisify } = require("util");
 const { findUserByEmail } = require("../Service/user.service");
 
+
 exports.verifyToken = async (req, res, next) => {
    const token = req.headers?.authorization?.split(" ")[1];
    if (!token) {

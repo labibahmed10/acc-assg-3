@@ -4,9 +4,11 @@ const cors = require("cors");
 const port = process.env.PORT || 5000;
 
 //routes
-const userRoute = require("./routes/user.route");
-const jobRoute = require("./routes/job.route");
-const companyRoute = require("./routes/company.route");
+const userRoute = require("./Routes/user.route");
+const adminRoute = require("./Routes/admin.route");
+const generalRoute = require("./Routes/general.route");
+const candidateRoute = require("./Routes/candidate.route");
+const hiringManagerRoute = require("./Routes/hiringManager.route");
 
 // middlewares
 app.use(cors());
@@ -15,10 +17,12 @@ app.use(express.json());
 // database connection here
 require("./server");
 
-// declaration of user,company,admin routes
-app.use("/api/v1/user", userRoute);
-app.use("/api/v1", jobRoute);
-app.use("/api/v1/company", companyRoute);
+// declaration of routes
+app.use("/api/", generalRoute);
+app.use("/api/user", userRoute);
+app.use("/api/admin", adminRoute);
+app.use("/api/", candidateRoute);
+app.use("/api/", hiringManagerRoute);
 
 app.get("/", (req, res) => {
    res.send("Welcome to the job management system api");

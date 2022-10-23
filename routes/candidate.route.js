@@ -1,8 +1,8 @@
 const express = require('express');
 const controller = require("../Controller/candidate.controller");
-const { authorize } = require('../Middleware/authorization');
-const { verifyToken } = require('../Middleware/verifyToken');
-const upload = require('../Middleware/upload');
+const { authorize } = require('../Middlewares/authorization');
+const { verifyToken } = require('../Middlewares/verifyToken');
+const upload = require('../Middlewares/upload');
 const router = express.Router()
 
 router.get("/jobs", controller.getAllJobs)
