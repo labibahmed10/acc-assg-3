@@ -1,8 +1,8 @@
 const express = require("express");
-const app = express();
 const cors = require("cors");
 const port = process.env.PORT || 5000;
 const dotenv = require("dotenv");
+const app = express();
 
 //routes
 const userRoute = require("./Routes/user.route");
@@ -26,13 +26,13 @@ app.use("/api/", hiringManagerRoute);
 // database connection here
 require("./server");
 
+app.get("/", (req, res) => {
+   res.send("Welcome to the job management system api");
+});
+
 // for invalid route will fix later
 app.use("*", (req, res) => {
    res.send("Go to the exact location like - /api/user");
-});
-
-app.get("/", (req, res) => {
-   res.send("Welcome to the job management system api");
 });
 
 app.listen(port, () => {
