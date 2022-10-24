@@ -1,5 +1,11 @@
 const mongoose = require('mongoose');
 const { ObjectId } = mongoose.Schema.Types
+
+// {
+//     "name":"hr-1",
+// }
+
+
 const hiringManagerSchema = mongoose.Schema({
     name: {
         type: String,

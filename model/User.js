@@ -74,7 +74,7 @@ const userSchema = mongoose.Schema({
     },
     appliedJobs: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Application",
+        ref: "Job",
     }],
  }, {
      timestamp: true
@@ -89,7 +89,7 @@ userSchema.pre('save', function (next) {
 })
 
 // Compare hash Password_____________
-userSchema.methods.compareHash = (pass, hashedPass) => {
+userSchema.methods.comparePass = (pass, hashedPass) => {
     const isValidPassword = bcrypt.compareSync(pass, hashedPass)
     return isValidPassword
 }

@@ -1,5 +1,17 @@
 const mongoose = require('mongoose');
 const { ObjectId } = mongoose.Schema.Types
+
+// {
+//     "title":"fronend-dev",
+//     "location":"Asia",
+//     "jobType":"On-site",
+//     "salary":25000,
+//     "deadLine":"03-12-2022",
+//     "status":"active"
+// }
+
+
+
 const jobSchema = mongoose.Schema({
     title: {
         type: String,
