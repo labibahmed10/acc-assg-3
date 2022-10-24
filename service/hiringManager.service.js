@@ -7,7 +7,7 @@ exports.createJobService = async (jobInfo) => {
 };
 
 exports.getJobsService = async (manager) => {
-   const jobs = await Job.find({ "postedBy.id": manager.id }).select("-__v");
+   const jobs = await Job.find({ "postedBy.id": manager.id }).select("-__v -_id -applyCount -appliedCandidate -postedBy");
    return jobs;
 };
 
@@ -17,11 +17,17 @@ exports.findUserByEmail = async (email) => {
 };
 
 exports.getJobService = async (jobId, managerId) => {
-   const jobs = await Job.findOne({ _id: jobId, "postedBy.id": managerId }).populate("appliedCandidate.applicantId");
+   const jobs = await Job.findOne({ _id: jobId, "postedBy.id": managerId }).select("-postedBy -_id -__v").populate("appliedCandidate.applicantId");
    return jobs;
 };
 
 exports.updateJobService = async (jobId, managerId, jobInfo) => {
-   const result = await Job.findOneAndUpdate({ _id: jobId, "postedBy.id": managerId }, jobInfo, { runValidators: true, new: true });
+   const result = await Job.findOneAndUpdate({ 
+      _id: jobId,
+      "postedBy.id": managerId
+   }, jobInfo,
+   { runValidators: true,
+     new: true 
+   });
    return result;
 };

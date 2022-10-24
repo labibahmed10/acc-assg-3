@@ -29,7 +29,7 @@ exports.getAllJobs = async (req, res) => {
 
       res.status(201).json({
          status: "Success",
-         message: "Get Job data successfully",
+         message: "Got all the jobs of this hiring manager",
          data: jobs,
       });
    } catch (error) {
@@ -41,18 +41,26 @@ exports.getAllJobs = async (req, res) => {
 };
 
 exports.getJob = async (req, res) => {
-   const { id } = req.params;
-
    try {
+      const { id } = req.params;
       const job = await service.getJobService(id, req.user._id);
 
       if (!job) {
-         return res.status(400).json({ status: "Fail", message: "No Job Data found!" });
+         return res.status(400).json({
+            status: "Fail",
+            message: "No Job Data found!",
+         });
       }
 
-      res.status(500).json({ status: "Success", data: job });
+      res.status(500).json({
+         status: "Success",
+         data: job,
+      });
    } catch (error) {
-      res.status(500).json({ status: "Failed", error: error.message });
+      res.status(500).json({
+         status: "Failed",
+         error: error.message,
+      });
    }
 };
 
@@ -61,13 +69,23 @@ exports.updateJob = async (req, res) => {
    const jobInfo = req.body;
 
    try {
-      const job = await service.updateJobService(id, req.user._id, jobInfo);
-      if (!job) {
-         return res.status(400).json({ status: "Fail", message: "With this manager, No Job Data found!" });
+      const updatedJobDetails = await service.updateJobService(id, req.user._id, jobInfo);
+      if (!updatedJobDetails) {
+         return res.status(400).json({
+            status: "Fail",
+            message: "With this manager, No Job Data found!",
+         });
       }
 
-      res.status(500).json({ status: "Success", data: job });
+      res.status(500).json({
+         status: "Success",
+         message: "successfully updated the job details with ease",
+         data: updatedJobDetails,
+      });
    } catch (error) {
-      res.status(500).json({ status: "Failed", error: error.message });
+      res.status(500).json({
+         status: "Failed",
+         error: error.message,
+      });
    }
 };
