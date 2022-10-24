@@ -2,6 +2,16 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs')
 
+// {
+//     "name":"",
+//     "email":"@gmail.com",
+//     "password":"Asdasd1!",
+//     "confirmPassword":"Asdasd1!",
+//     "contactNumber":"5454548",    
+// }
+
+
+
 const userSchema = mongoose.Schema({
     name: {
         type: String,
@@ -19,7 +29,7 @@ const userSchema = mongoose.Schema({
     },
     password: {
         type: String,
-        required: true,
+        required: [true, "Please type your password"],
         validate: {
             validator: (value) => validator.isStrongPassword(value, {
                 minLength: 5,
@@ -29,6 +39,16 @@ const userSchema = mongoose.Schema({
                 minSymbols: 1,
             }),
             message: "Password is not strong enough.",
+        },
+    },
+    confirmPassword: {
+        type: String,
+        required: [true, "Please confirm your password"],
+        validate: {
+          validator: function (value) {
+            return value === this.password;
+          },
+          message: "Passwords don't match!",
         },
     },
     role: {
@@ -44,14 +64,27 @@ const userSchema = mongoose.Schema({
         default: 'active',
         enum: ['active', 'inactive', 'blocked']
     },
-    contactNumber: String,
-    address: String
-}, { timestamp: true })
+    contactNumber: {
+        type: String,
+        validate: [validator.isMobilePhone, "Please provide a valid contact number"],
+    },
+    imageURL: {
+        type: String,
+        validate: [validator.isURL, "Please provide a valid url"],
+    },
+    appliedJobs: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Application",
+    }],
+ }, {
+     timestamp: true
+})
 
 // Hash Password_____________
 userSchema.pre('save', function (next) {
     const hashedPass = bcrypt.hashSync(this.password, 10)
-    this.password = hashedPass
+    this.password = hashedPass;
+    this.confirmPassword = undefined;
     next()
 })
 

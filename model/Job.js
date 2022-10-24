@@ -19,7 +19,7 @@ const jobSchema = mongoose.Schema({
         type: String,
         enum: {
             values: ['On-site', 'Remote', 'Hybrid'],
-            message: '{VALUE} is not accepted as location. Chose from On-site/Remote/Hybrid '
+            message: '{VALUE} is not accepted as Job type. Chose from On-site/Remote/Hybrid '
         },
         required: [true, 'Job type is required']
     },
