@@ -17,6 +17,9 @@ exports.verifyToken = async (req, res, next) => {
       req.user = user;
       next();
    } catch (error) {
-      res.status(500).json({ status: "Failed", error: error.message });
+      res.status(500).json({
+          status: "Failed", 
+          error: error.message 
+         });
    }
 };

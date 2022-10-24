@@ -14,10 +14,11 @@ exports.signUp = async (req, res) => {
       }
 
       const user = await service.signUpService(userInfo);
+      const { password,appliedJobs,__v,imageURL, ...others } = user.toObject();
       res.status(400).json({ 
-            status: "Failed", 
+            status: "Success", 
             message: "User signed up successfully", 
-            data: user
+            data: others
          });
          
    } catch (error) {
@@ -62,7 +63,7 @@ exports.singIn = async (req, res) => {
          });
       }
 
-      const { password: pwd, ...others } = user.toObject();
+      const { password:a,__v, ...others } = user.toObject();
       const token = generateToken(user);
 
       res.status(200).json({
@@ -88,11 +89,12 @@ exports.me = async (req, res) => {
             error: "User not found!" 
          });
       }
-      
+
+      const { password,__v, ...others } = user.toObject();
       res.status(200).json({ 
          status: "Success", 
          message: "User Verified", 
-         data: user 
+         data: others
       });
    } catch (error) {
       res.status(500).json({ 

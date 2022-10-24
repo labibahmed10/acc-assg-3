@@ -7,6 +7,11 @@ exports.userExist = async (email) => {
    return result;
 };
 
+exports.findUserByEmail = async (email) => {
+   const result = await User.findOne({ email });
+   return result;
+};
+
 exports.signUpService = async (userInfo) => {
    const user = await User.create(userInfo);
 

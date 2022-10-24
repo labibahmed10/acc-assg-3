@@ -6,7 +6,7 @@ const { ObjectId } = mongoose.Schema.Types
 //     "location":"Asia",
 //     "jobType":"On-site",
 //     "salary":25000,
-//     "deadLine":"03-12-2022",
+//     "deadLine":"2022-12-10",
 //     "status":"active"
 // }
 

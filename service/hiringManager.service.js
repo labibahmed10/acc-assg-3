@@ -1,13 +1,19 @@
 const Job = require("../model/Job");
+const User = require("../model/User");
 
 exports.createJobService = async (jobInfo) => {
    const job = await Job.create(jobInfo);
    return job;
 };
 
-exports.getJobsService = async () => {
-   const jobs = await Job.find();
+exports.getJobsService = async (manager) => {
+   const jobs = await Job.find({ "postedBy.id": manager.id }).select("-__v");
    return jobs;
+};
+
+exports.findUserByEmail = async (email) => {
+   const result = await User.findOne({ email }).select("-password -__v -appliedJobs -role -status");
+   return result;
 };
 
 exports.getJobService = async (jobId, managerId) => {

@@ -1,26 +1,42 @@
 const service = require("../service/hiringManager.service");
 
 exports.createJob = async (req, res) => {
-   let { openingDay, ...jobInfo } = req.body;
-   let date = new Date();
-   date.setDate(date.getDate() + openingDay);
+   let { ...jobInfo } = req.body;
 
    try {
-      jobInfo = { ...jobInfo, postedBy: { name: req.user.name, id: req.user._id }, deadLine: date };
+      jobInfo = { ...jobInfo, postedBy: { name: req.user.name, id: req.user._id } };
+
       const job = await service.createJobService(jobInfo);
 
-      res.status(201).json({ status: "Success", message: "Job created successfully", data: job });
+      res.status(201).json({
+         status: "Success",
+         message: "Job created successfully",
+         data: job,
+      });
    } catch (error) {
-      res.status(500).json({ status: "Failed", error: error.message });
+      res.status(500).json({
+         status: "Failed",
+         error: error.message,
+      });
    }
 };
 
 exports.getAllJobs = async (req, res) => {
    try {
-      const jobs = await service.getJobsService();
-      res.status(201).json({ status: "Success", message: "Get Job data successfully", data: jobs });
+      const { email } = req.user;
+      const thisManager = await service.findUserByEmail(email);
+      const jobs = await service.getJobsService(thisManager);
+
+      res.status(201).json({
+         status: "Success",
+         message: "Get Job data successfully",
+         data: jobs,
+      });
    } catch (error) {
-      res.status(500).json({ status: "Failed", error: error.message });
+      res.status(500).json({
+         status: "Failed",
+         error: error.message,
+      });
    }
 };
 
