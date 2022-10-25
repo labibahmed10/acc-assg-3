@@ -8,7 +8,7 @@ exports.getAllCandidatesService = async () => {
          path: "user",
          select: "-__v -password -appliedJobs",
       })
-      .select("-__v");
+      .select("-__v -appliedFor");
    return candidates;
 };
 
