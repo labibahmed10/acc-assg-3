@@ -43,19 +43,23 @@ exports.getJob = async (req, res) => {
 exports.applyJob = async (req, res) => {
    const { jobId } = req.params;
    const applicantId = req.user._id;
+
    try {
       const job = await service.findJobById(jobId);
       if (!job) {
          return res.status(500).json({ status: "Failed", error: "No job found" });
       }
+      console.log(applicantId.toString());
 
-      if (job.appliedCandidate.includes(applicantId)) {
-         return res.status(500).json({ status: "Failed", error: "You'vd already applied for this job." });
+      if (job.applyCount > 0) {
+         if (job.appliedCandidate.map((jid) => jid.applicantId.toString() == applicantId.toString())) {
+            return res.status(500).json({ status: "Failed", error: "You'vd already applied for this job." });
+         }
       }
 
       const expired = new Date() > job.deadLine;
       if (expired) {
-         return res.status(500).json({ status: "Failed", error: "Deadline for apply is expired" });
+         return res.status(500).json({ status: "Failed", error: "Deadline for applying this job is expired" });
       }
 
       const result = await service.applyJobService(jobId, applicantId, req?.file?.filename);

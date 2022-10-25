@@ -10,7 +10,7 @@ exports.getJobService = async (jobId) => {
    const job = await Job.findById(jobId).populate({
       path: "postedBy.id",
       select: "-appliedJobs -password -__v -status",
-   });
+   }).select("-__v")
    return job;
 };
 
