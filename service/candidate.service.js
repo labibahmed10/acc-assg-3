@@ -7,7 +7,10 @@ exports.getAllJobsService = async (filter, sort) => {
 };
 
 exports.getJobService = async (jobId) => {
-   const job = await Job.findById(jobId).populate("postedBy.id");
+   const job = await Job.findById(jobId).populate({
+      path: "postedBy.id",
+      select: "-appliedJobs -password -__v -status",
+   });
    return job;
 };
 
