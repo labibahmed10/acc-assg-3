@@ -49,7 +49,6 @@ exports.applyJob = async (req, res) => {
       if (!job) {
          return res.status(500).json({ status: "Failed", error: "No job found" });
       }
-      console.log(applicantId.toString());
 
       if (job.applyCount > 0) {
          if (job.appliedCandidate.map((jid) => jid.applicantId.toString() == applicantId.toString())) {

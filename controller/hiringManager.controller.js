@@ -1,11 +1,10 @@
 const service = require("../service/hiringManager.service");
 
 exports.createJob = async (req, res) => {
-   let { ...jobInfo } = req.body;
+   let { deadLine, ...jobInfo } = req.body;
 
    try {
-      jobInfo = { ...jobInfo, postedBy: { name: req.user.name, id: req.user._id } };
-
+      jobInfo = { ...jobInfo, postedBy: { name: req.user.name, id: req.user._id }, deadLine: new Date(deadLine) };
       const job = await service.createJobService(jobInfo);
 
       res.status(201).json({
