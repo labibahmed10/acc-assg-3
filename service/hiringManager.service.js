@@ -7,7 +7,7 @@ exports.createJobService = async (jobInfo) => {
 };
 
 exports.getJobsService = async (manager) => {
-   const jobs = await Job.find({ "postedBy.id": manager.id }).select("-__v -_id -applyCount -appliedCandidate -postedBy");
+   const jobs = await Job.find({ "postedBy.id": manager.id }).select("-__v -applyCount -appliedCandidate -postedBy");
    return jobs;
 };
 
