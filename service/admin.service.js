@@ -3,7 +3,12 @@ const Candidate = require("../model/Candidate");
 const HiringManager = require("../model/HiringManager");
 
 exports.getAllCandidatesService = async () => {
-   const candidates = await Candidate.find({}).populate("user");
+   const candidates = await Candidate.find({})
+      .populate({
+         path: "user",
+         select: "-__v -password -appliedJobs",
+      })
+      .select("-__v");
    return candidates;
 };
 
