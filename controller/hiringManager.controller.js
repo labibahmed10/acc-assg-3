@@ -5,8 +5,8 @@ exports.createJob = async (req, res) => {
 
    try {
       jobInfo = { ...jobInfo, postedBy: { name: req.user.name, id: req.user._id }, deadLine: new Date(deadLine) };
-      const job = await service.createJobService(jobInfo);
-
+      const job = await service.createJobService(jobInfo,req?.user);
+      // console.log(job);
       res.status(201).json({
          status: "Success",
          message: "Job created successfully",

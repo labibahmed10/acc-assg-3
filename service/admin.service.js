@@ -23,7 +23,12 @@ exports.getCandidateService = async (id) => {
 };
 
 exports.getHiringManagersService = async () => {
-   const candidates = await HiringManager.find({}).populate("user");
+   const candidates = await HiringManager.find({})
+      .populate({
+         path: "user",
+         select: "-__v -password -appliedJobs",
+      })
+      .select("-__v -appliedFor");
    return candidates;
 };
 

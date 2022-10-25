@@ -59,11 +59,6 @@ const userSchema = mongoose.Schema({
             message: "User role can't be {VALUE}"
         }
     },
-    status: {
-        type: String,
-        default: 'active',
-        enum: ['active', 'inactive', 'blocked']
-    },
     contactNumber: {
         type: String,
         validate: [validator.isMobilePhone, "Please provide a valid contact number"],
@@ -77,7 +72,7 @@ const userSchema = mongoose.Schema({
         ref: "Job",
     }],
  }, {
-     timestamp: true
+     timestamps: true
 })
 
 // Hash Password_____________

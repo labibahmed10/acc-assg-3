@@ -40,6 +40,22 @@ const jobSchema = mongoose.Schema({
         required: [true, 'Job salary is required'],
         min: [0, 'Job salary can\'t be negative']
     },
+    deadLine: {
+        type: Date,
+        required: true
+    },
+    status: {
+        type: String,
+        default: 'active',
+        enum: {
+            values: ['active', 'inactive', 'removed'],
+            message: "{VALUE} is not accepted."
+        }
+    },
+    applyCount: {
+        type: Number,
+        default: 0
+    },
     postedBy: {
         name: {
             type: String,
@@ -51,10 +67,6 @@ const jobSchema = mongoose.Schema({
             required: true
         }
     },
-    deadLine: {
-        type: Date,
-        required: true
-    },
     appliedCandidate: [{
         applicantId: {
             type: ObjectId,
@@ -62,20 +74,8 @@ const jobSchema = mongoose.Schema({
         },
         resume: String
     }],
-    status: {
-        type: String,
-        default: 'inactive',
-        enum: {
-            values: ['active', 'inactive', 'removed'],
-            message: "{VALUE} is not accepted."
-        }
-    },
-    applyCount: {
-        type: Number,
-        default: 0
-    }
-
-}, { timestamp: true })
+         
+}, { timestamps: true })
 
 const Job = mongoose.model("Job", jobSchema)
 module.exports = Job

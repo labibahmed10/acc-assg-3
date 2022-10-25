@@ -19,8 +19,9 @@ const hiringManagerSchema = mongoose.Schema({
     },
     jobPosted: [{
         type: ObjectId,
-        ref: 'Job'
-    }]
+        ref: 'Job',
+        required: true
+    }]  
 })
 
 const HiringManager = mongoose.model('HiringManager', hiringManagerSchema)

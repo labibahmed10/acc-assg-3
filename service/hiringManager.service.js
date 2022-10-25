@@ -1,8 +1,13 @@
 const Job = require("../model/Job");
 const User = require("../model/User");
+const HiringManager = require("../model/HiringManager");
 
-exports.createJobService = async (jobInfo) => {
+exports.createJobService = async (jobInfo, manager) => {
    const job = await Job.create(jobInfo);
+   const { title, _id } = job;
+   const jobPosted = { name: title, _id };
+
+   await HiringManager.findOneAndUpdate({ user: manager?._id }, { $push: { jobPosted } }, { runValidators: true, new: true });
    return job;
 };
 
