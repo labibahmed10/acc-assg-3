@@ -22,12 +22,13 @@ exports.getJobService = async (jobId, managerId) => {
 };
 
 exports.updateJobService = async (jobId, managerId, jobInfo) => {
-   const result = await Job.findOneAndUpdate({ 
-      _id: jobId,
-      "postedBy.id": managerId
-   }, jobInfo,
-   { runValidators: true,
-     new: true 
-   });
+   const result = await Job.findOneAndUpdate(
+      {
+         _id: jobId,
+         "postedBy.id": managerId,
+      },
+      jobInfo,
+      { runValidators: true, new: true },
+   ).select("-postedBy");
    return result;
 };
