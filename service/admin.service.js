@@ -13,7 +13,12 @@ exports.getAllCandidatesService = async () => {
 };
 
 exports.getCandidateService = async (id) => {
-   const candidate = await Candidate.findById(id).populate("user");
+   const candidate = await Candidate.findById(id)
+      .populate({
+         path: "user",
+         select: "-__v -password -appliedJobs",
+      })
+      .select("-__v");
    return candidate;
 };
 
